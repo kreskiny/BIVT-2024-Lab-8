@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 
 
-namespace Lab_8_1
+namespace Lab_8
 {
     public class Blue_4 : Blue
     {
