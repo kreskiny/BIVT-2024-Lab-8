@@ -1,8 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System;
 
 namespace Lab_8
 {
@@ -21,60 +18,59 @@ namespace Lab_8
 
         public override void Review()
         {
-            var result = "";
-            var words = Input.Split(' ');
+            if (string.IsNullOrWhiteSpace(Input))
+            {
+                _output = "";
+                return;
+            }
 
-            foreach (var part in words)
+            var words = Input.Split(' ');
+            var resultWords = new List<string>();
+
+            foreach (string part in words)
             {
                 string word = "";
-                string punctuation = "";
+                string prefix = "";
+                string suffix = "";
 
-                int i = 0;
-                while (i < part.Length && (char.IsLetterOrDigit(part[i]) || part[i] == '-'))
+                int start = 0;
+                int end = part.Length - 1;
+
+                while (start <= end && !char.IsLetterOrDigit(part[start]) && part[start] != '-')
                 {
-                    word += part[i];
-                    i++;
+                    prefix += part[start];
+                    start++;
                 }
 
-                if (i < part.Length)
-                    punctuation = part.Substring(i);
-                else
-                    punctuation = "";
+                while (end >= start && !char.IsLetterOrDigit(part[end]) && part[end] != '-')
+                {
+                    suffix = part[end] + suffix;
+                    end--;
+                }
 
+                if (start <= end)
+                    word = part.Substring(start, end - start + 1);
 
                 if (!word.Contains(_pattern))
                 {
-                    if (result.Length > 0)
-                        result += " ";
-
-                    result += word;
-
-                    if (punctuation!=null && punctuation!="")
-                        result += punctuation;
+                    resultWords.Add(prefix + word + suffix);
                 }
                 else
                 {
-                    if (punctuation != null && punctuation != "" && result.Length > 0)
+                    if (prefix.Contains("\"") && suffix.Contains("\""))
                     {
-                        if (result[result.Length - 1] == ' ')
-                            result = result.Substring(0, result.Length - 1);
-
-                        result += punctuation;
+                        resultWords.Add(prefix.Replace("\"", "") + "\"" + "\"" + suffix.Replace("\"", ""));
                     }
                 }
             }
 
-            _output = result.Trim();
+            _output = string.Join(" ", resultWords).Replace("  ", " ").Trim();
         }
-
-
 
 
         public override string ToString()
         {
-            return Output;
+            return _output;
         }
     }
-
 }
-

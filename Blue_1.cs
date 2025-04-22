@@ -22,6 +22,12 @@ namespace Lab_8
 
         public override void Review()
         {
+            if (string.IsNullOrWhiteSpace(Input))
+            {
+                _output = Array.Empty<string>();
+                return;
+            }
+
             List<string> lines = new List<string>();
             string[] words = Input.Split(' ');
             string currentLine = "";
@@ -56,5 +62,6 @@ namespace Lab_8
         {
             return string.Join(Environment.NewLine, _output);
         }
+
     }
 }

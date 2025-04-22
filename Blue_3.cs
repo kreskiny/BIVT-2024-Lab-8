@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Lab_8_1;
 
 namespace Lab_8
 {
@@ -22,6 +23,11 @@ namespace Lab_8
 
         public override void Review()
         {
+            if (string.IsNullOrWhiteSpace(Input))
+            {
+                _output = Array.Empty<(char, double)>();
+                return;
+            }
             char[] separators = new char[] { ' ', '\t', '\r', '\n' };
 
             string[] parts = Input.Split(separators);
@@ -30,7 +36,7 @@ namespace Lab_8
             // Удаляем все не-буквы и пропускаем пустые
             for (int i = 0; i < parts.Length; i++)
             {
-                if (parts[i].Length == 0)
+                if (string.IsNullOrWhiteSpace(parts[i]) || parts[i] == "")
                     continue;
 
                 string cleanWord = "";
@@ -73,7 +79,7 @@ namespace Lab_8
             // Считаем проценты и добавляем в список
             foreach (var pair in counts)
             {
-                double percent = Math.Round(100.0 * pair.Value / totalWords, 2);
+                double percent = Math.Round(100.0 * pair.Value / totalWords, 4);
                 tempList.Add((pair.Key, percent));
             }
 
