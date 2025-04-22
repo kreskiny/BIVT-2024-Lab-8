@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Lab_8_1
+namespace Lab_8
 {
     public abstract class Blue
     {
