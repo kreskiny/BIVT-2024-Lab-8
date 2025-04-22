@@ -3,9 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System;
-using Lab_8_1;
 
-namespace Lab_8_1
+namespace Lab_8
 {
     public class Blue_2 : Blue
     {
