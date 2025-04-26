@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Lab_8_1;
 
-namespace Lab_8
+namespace Lab_8_1
 {
     public class Blue_3 : Blue
     {
@@ -33,7 +33,6 @@ namespace Lab_8
             string[] parts = Input.Split(separators);
             List<string> words = new List<string>();
 
-            // Удаляем все не-буквы и пропускаем пустые
             for (int i = 0; i < parts.Length; i++)
             {
                 if (string.IsNullOrWhiteSpace(parts[i]) || parts[i] == "")
@@ -124,11 +123,12 @@ namespace Lab_8
             string result = "";
             for (int i = 0; i < _output.Length; i++)
             {
-                result += _output[i].Item1 + " - " + _output[i].Item2;
+                result += $"{_output[i].Item1} - {_output[i].Item2:0.0000}";
                 if (i < _output.Length - 1)
                     result += Environment.NewLine;
             }
             return result;
         }
+
     }
 }
