@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Lab_8_1;
 
-namespace Lab_8_1
+namespace Lab_8
 {
     public class Blue_3 : Blue
     {
