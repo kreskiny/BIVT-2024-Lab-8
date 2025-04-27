@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
 
-namespace Lab_8_1
+namespace Lab_8
 {
     public class Blue_2 : Blue
     {
