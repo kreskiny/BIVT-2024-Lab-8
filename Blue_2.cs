@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Runtime.InteropServices;
-using System.Text.RegularExpressions;
+using System.Text;
 
 namespace Lab_8
 {
@@ -12,7 +10,7 @@ namespace Lab_8
 
         public Blue_2(string input, string pattern) : base(input)
         {
-            _pattern = pattern;
+            _pattern = pattern?.ToLower();
             _output = null;
         }
 
@@ -20,72 +18,89 @@ namespace Lab_8
 
         public override void Review()
         {
-            if (string.IsNullOrWhiteSpace(Input))
+            if (Input == null || _pattern == null)
             {
                 _output = null;
                 return;
             }
 
-            var words = Input.Split(' ');
-            var resultWords = new List<string>();
-
-            foreach (string originalWord in words)
+            if (string.IsNullOrWhiteSpace(Input))
             {
-                if (originalWord==null || originalWord.Length==0) continue;
-                string word = "";
+                _output = "";
+                return;
+            }
+
+            string[] tempWords = Input.Split(' ');
+            int wordCount = 0;
+            foreach (string w in tempWords)
+            {
+                if (!string.IsNullOrEmpty(w)) wordCount++;
+            }
+
+            string[] words = new string[wordCount];
+            int index = 0;
+            foreach (string w in tempWords)
+            {
+                if (!string.IsNullOrEmpty(w))
+                {
+                    words[index++] = w;
+                }
+            }
+
+            string result = "";
+            bool spaceNeeded = false;
+
+            for (int i = 0; i < words.Length; i++)
+            {
+                string originalWord = words[i];
+                if (string.IsNullOrEmpty(originalWord)) continue;
+
+                string word = originalWord;
                 string prefix = "";
                 string suffix = "";
 
                 int start = 0;
-                int end = originalWord.Length - 1;
-
-                while (start <= end && !char.IsLetter(originalWord[start]) && originalWord[start] != '-')
+                while (start < word.Length && !char.IsLetter(word[start]) && word[start] != '-')
                 {
-                    prefix += originalWord[start];
+                    prefix += word[start];
                     start++;
                 }
 
-                while (end >= start && !char.IsLetter(originalWord[end]) && originalWord[end] != '-')
+                int end = word.Length - 1;
+                while (end >= start && !char.IsLetter(word[end]) && word[end] != '-')
                 {
-                    suffix = originalWord[end] + suffix;
+                    suffix = word[end] + suffix;
                     end--;
                 }
 
-                if (start <= end)
-                {
-                    word = originalWord.Substring(start, end - start + 1);
-                }
+                string coreWord = (start <= end) ? word.Substring(start, end - start + 1) : "";
 
-                if (!word.ToLower().Contains(_pattern))
+                if (!coreWord.ToLower().Contains(_pattern))
                 {
-                    resultWords.Add(prefix + word + suffix);
+                    if (spaceNeeded) result += " ";
+                    result += prefix + coreWord + suffix;
+                    spaceNeeded = true;
                 }
                 else
                 {
                     string glued = prefix + suffix;
-
-                    if (resultWords.Count > 0 && glued.Length > 0)
+                    if (!string.IsNullOrEmpty(glued))
                     {
-                        int lastIndex = resultWords.Count - 1;
-                        resultWords[lastIndex] += glued;
-                    }
-                    else if (glued.Length > 0)
-                    {
-                        resultWords.Add(glued);
+                        if (spaceNeeded) result += " ";
+                        result += glued;
+                        spaceNeeded = true;
                     }
                 }
             }
 
-            _output = string.Join(" ", resultWords).Trim();
-            _output = string.Join(" ", resultWords).Trim();
+            _output = result;
 
-            _output = Regex.Replace(_output, @"-""", "- \"\"");
-            _output = Regex.Replace(_output, @"""""", " \"\"");
-            _output = Regex.Replace(_output, @"\s{2,}", " ");
-
+            _output = _output.Replace(" .", ".")
+                            .Replace(" ,", ",")
+                            .Replace(" ;", ";")
+                            //.Replace(" \"", "\"")
+                            .Replace("\" ", "\"");
         }
-
-
 
         public override string ToString()
         {

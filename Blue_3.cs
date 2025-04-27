@@ -1,9 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Lab_8_1;
 
 namespace Lab_8
 {
@@ -13,113 +10,101 @@ namespace Lab_8
 
         public Blue_3(string input) : base(input)
         {
-            _output = Array.Empty<(char, double)>();
+            _output = null;
         }
 
         public (char, double)[] Output
         {
-            get { return _output; }
+            get
+            {
+                if (_output == null) return null;
+                (char, double)[] copy = new (char, double)[_output.Length];
+                Array.Copy(_output, copy, _output.Length);
+                return copy;
+            }
         }
 
         public override void Review()
         {
+            if (Input == null)
+            {
+                _output = null;
+                return;
+            }
+
             if (string.IsNullOrWhiteSpace(Input))
             {
                 _output = Array.Empty<(char, double)>();
                 return;
             }
-            char[] separators = new char[] { ' ', '\t', '\r', '\n' };
 
-            string[] parts = Input.Split(separators);
-            List<string> words = new List<string>();
+            string processed = Input.Replace(" - ", " ").Replace(" -", " ").Replace("- ", " ")
+                                  .Replace("–", " ");
 
-            for (int i = 0; i < parts.Length; i++)
+            string[] words = processed.Split(new[] { ' ', '\t', '\n', '\r', ',', '.', '!', '?', ':', ';', '"', '(', ')' },
+                                       StringSplitOptions.RemoveEmptyEntries);
+
+            int[] counts = new int[char.MaxValue];
+            int totalWords = 0;
+
+            foreach (string word in words)
             {
-                if (string.IsNullOrWhiteSpace(parts[i]) || parts[i] == "")
+                if (string.IsNullOrEmpty(word) || word.Any(char.IsDigit))
                     continue;
 
-                string cleanWord = "";
-
-                for (int j = 0; j < parts[i].Length; j++)
+                char firstChar = char.ToLower(word[0]);
+                if (char.IsLetter(firstChar))
                 {
-                    if (char.IsLetter(parts[i][j]))
-                    {
-                        cleanWord += parts[i][j];
-                    }
-                }
-
-                if (cleanWord.Length > 0)
-                {
-                    words.Add(cleanWord);
+                    counts[firstChar]++;
+                    totalWords++;
                 }
             }
 
-            int totalWords = words.Count;
-            Dictionary<char, int> counts = new Dictionary<char, int>();
-
-            // Подсчёт слов по первой букве
-            for (int i = 0; i < words.Count; i++)
+            if (totalWords == 0)
             {
-                char first = char.ToLower(words[i][0]);
+                _output = Array.Empty<(char, double)>();
+                return;
+            }
 
-                if (counts.ContainsKey(first))
+            int uniqueCount = 0;
+            for (int i = 0; i < counts.Length; i++)
+            {
+                if (counts[i] > 0) uniqueCount++;
+            }
+
+            (char, double)[] temp = new (char, double)[uniqueCount];
+            int index = 0;
+            for (int i = 0; i < counts.Length; i++)
+            {
+                if (counts[i] > 0)
                 {
-                    counts[first]++;
-                }
-                else
-                {
-                    counts[first] = 1;
+                    double percent = (100.0 * counts[i]) / totalWords;
+                    percent = Math.Floor(percent * 10000 + 0.5) / 10000;
+                    temp[index++] = ((char)i, percent);
                 }
             }
 
-
-            List<(char, double)> tempList = new List<(char, double)>();
-
-            // Считаем проценты и добавляем в список
-            foreach (var pair in counts)
+            for (int i = 0; i < temp.Length - 1; i++)
             {
-                double percent = Math.Round(100.0 * pair.Value / totalWords, 4);
-                tempList.Add((pair.Key, percent));
-            }
-
-            for (int i = 0; i < tempList.Count - 1; i++)
-            {
-                for (int j = i + 1; j < tempList.Count; j++)
+                for (int j = i + 1; j < temp.Length; j++)
                 {
-                    bool needSwap = false;
-
-                    if (tempList[i].Item2 < tempList[j].Item2)
+                    if (temp[i].Item2 < temp[j].Item2 ||
+                       (Math.Abs(temp[i].Item2 - temp[j].Item2) < 0.0001 && temp[i].Item1 > temp[j].Item1))
                     {
-                        needSwap = true;
-                    }
-                    else if (tempList[i].Item2 == tempList[j].Item2)
-                    {
-                        if (tempList[i].Item1 > tempList[j].Item1)
-                        {
-                            needSwap = true;
-                        }
-                    }
-
-                    if (needSwap)
-                    {
-                        var temp = tempList[i];
-                        tempList[i] = tempList[j];
-                        tempList[j] = temp;
+                        var t = temp[i];
+                        temp[i] = temp[j];
+                        temp[j] = t;
                     }
                 }
             }
 
-            _output = new (char, double)[tempList.Count];
-            for (int i = 0; i < tempList.Count; i++)
-            {
-                _output[i] = tempList[i];
-            }
-
-
+            _output = temp;
         }
 
         public override string ToString()
         {
+            if (_output == null || _output.Length == 0) return null;
+
             string result = "";
             for (int i = 0; i < _output.Length; i++)
             {
@@ -129,6 +114,5 @@ namespace Lab_8
             }
             return result;
         }
-
     }
 }
