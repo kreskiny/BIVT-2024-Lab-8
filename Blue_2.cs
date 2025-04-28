@@ -99,7 +99,7 @@ namespace Lab_8
                             .Replace(" ,", ",")
                             .Replace(" ;", ";")
                             //.Replace(" \"", "\"")
-                            .Replace("\" ", "\"");
+                            //.Replace("\" ", "\"");
         }
 
         public override string ToString()
