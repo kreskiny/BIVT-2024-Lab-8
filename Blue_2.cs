@@ -97,7 +97,7 @@ namespace Lab_8
 
             _output = _output.Replace(" .", ".")
                             .Replace(" ,", ",")
-                            .Replace(" ;", ";")
+                            .Replace(" ;", ";");
                             //.Replace(" \"", "\"")
                             //.Replace("\" ", "\"");
         }
